@@ -1,0 +1,8 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { extractProducts,probe,PUBLIC_SOURCES } from '../lib/public-probe.js';
+const source=PUBLIC_SOURCES.find(s=>s.kind==='product'&&s.store==='Shopee');
+test('extrai somente produtos com título, BRL, preço e domínio da loja',()=>{const product={ '@type':'Product',name:'Potes',offers:{price:'29.90',priceCurrency:'BRL'},url:source.url,image:'https://down-br.img.susercontent.com/file/example'};const html=p=>'<script type="application/ld+json">'+JSON.stringify(p)+'</script>';assert.equal(extractProducts(html(product),source)[0].price,29.9);assert.equal(extractProducts(html({...product,offers:{price:'10',priceCurrency:'USD'}}),source).length,0);assert.equal(extractProducts(html({...product,url:'https://invalid.example/product'}),source).length,0);assert.equal(extractProducts(html({...product,offers:{price:'0',priceCurrency:'BRL'}}),source).length,0)});
+test('não transforma título genérico ou HTML sem preço em oferta',()=>{assert.equal(extractProducts('<title>Shopee Brasil</title><script src="app.js"></script>',source).length,0)});
+test('bloqueios são registrados sem novas tentativas ou oferta inventada',async()=>{let calls=0;const result=await probe(source,async()=>{calls++;return new Response('<title>Forbidden</title>',{status:403})});assert.equal(calls,1);assert.equal(result.status,'blocked');assert.equal(result.products.length,0)});
+test('não segue redirecionamentos fora do domínio autorizado',async()=>{let calls=0;const result=await probe(source,async()=>{calls++;return new Response('',{status:302,headers:{location:'http://127.0.0.1/private'}})});assert.equal(calls,1);assert.equal(result.status,'redirect_blocked')});
