@@ -1,0 +1,10 @@
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import vm from 'node:vm';
+const context={window:{}};
+vm.runInNewContext(readFileSync('dist/catalog.js','utf8'),context);
+vm.runInNewContext(readFileSync('dist/photos.js','utf8'),context);
+const catalog=context.window.GARIMPO_CATALOG;
+const offers=catalog.offers.map(o=>({...o,stage:'found',affiliate:'',coupon:'',text:'',demo:false,oldPrice:null,researchedOn:o.researchedOn||catalog.researchedOn,createdAt:(o.researchedOn||catalog.researchedOn)+'T15:00:00-03:00',sourceURL:o.sourceURL||o.url}));
+mkdirSync('lib',{recursive:true});
+writeFileSync('lib/seed.json',JSON.stringify(offers,null,2)+'\n');
+console.log(`Build estático e seed verificados: ${offers.length} ofertas. Nenhuma integração de loja é ativada no build.`);

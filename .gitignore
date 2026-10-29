@@ -9,6 +9,7 @@ Thumbs.db
 
 # Identidade e saídas da hospedagem original
 .openai/
+.vercel/
 outputs/
 *.tar.gz
 

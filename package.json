@@ -1,0 +1,13 @@
+{
+  "name": "garimpo-de-links",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test test/*.test.mjs && node check-flow.cjs",
+    "check": "node --check dist/app.js && node --check dist/cloud.js && node --check api/workspace.js && node --check api/session.js"
+  },
+  "dependencies": { "@vercel/blob": "2.8.2" }
+}

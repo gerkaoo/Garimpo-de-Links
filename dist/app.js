@@ -95,7 +95,7 @@ bindCards=function(){bindOfferCards();$$('.product-photo').forEach(img=>{
  if(img.complete&&img.naturalWidth===0)fallback();
 })};
 const renderWithSchedule=render;
-render=function(){renderWithSchedule();if(view==='explore')$('#main').insertAdjacentHTML('beforeend','<div class="notice schedule-summary"><strong>Busca programada · 4 vezes ao dia</strong><br>8h, 12h, 16h e 20h · horário de Brasília. A automação roda nesta conversa pelo Codex. Requer computador ligado, aplicativo aberto e rede disponível. Nenhum post é enviado automaticamente.</div>')};
+render=function(){renderWithSchedule();if(view==='explore')$('#main').insertAdjacentHTML('beforeend','<div class="notice schedule-summary"><strong>Busca programada · 4 vezes ao dia</strong><br>8h, 12h, 16h e 20h · horário de Brasília. Agendamento na nuvem preparado. A integração com as lojas está pendente; nenhuma oferta nova é coletada automaticamente.</div>')};
 flow=simpleFlow;
 const bindBeforeSimpleFlow=bind;
 bind=function(){bindBeforeSimpleFlow();if(view==='flow')bindSimpleFlow()};
