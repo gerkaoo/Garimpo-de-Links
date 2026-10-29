@@ -1,0 +1,3 @@
+const fs=require('fs'),vm=require('vm');const ctx={window:{}};vm.runInNewContext(fs.readFileSync('dist/catalog.js','utf8'),ctx);
+async function inspect(o){try{const r=await fetch(o.url,{signal:AbortSignal.timeout(15000)});const html=await r.text();const meta=[...html.matchAll(/<meta\b[^>]*>/gi)].map(x=>x[0]).filter(x=>/(?:og:image|twitter:image)/i.test(x)).map(x=>x.match(/content\s*=\s*["']([^"']+)/i)?.[1]).filter(Boolean);return {id:o.id,status:r.status,images:meta,title:html.match(/<title[^>]*>([^<]*)/i)?.[1]}}catch(err){return {id:o.id,error:err.message}}}
+Promise.all(ctx.window.GARIMPO_CATALOG.offers.map(inspect)).then(r=>console.log(JSON.stringify(r,null,2)));

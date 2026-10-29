@@ -1,0 +1,17 @@
+# Dependências e arquivos locais
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+
+# Identidade e saídas da hospedagem original
+.openai/
+outputs/
+*.tar.gz
+
+# Backups de dados do usuário
+garimpo-backup-*.json
+ofertas-revisadas.json

@@ -1,0 +1,17 @@
+let simpleFlowTab='prepare';
+const simpleFlowGroups=[
+ {id:'prepare',title:'Preparar',stages:['found','linked','draft'],hint:'Adicione seu link de afiliado e confira a mensagem. Depois, aprove.'},
+ {id:'ready',title:'Prontas para postar',stages:['approved'],hint:'Copie a mensagem aprovada e envie no seu WhatsApp. Depois, marque como publicada.'},
+ {id:'done',title:'Publicadas',stages:['published'],hint:'Aqui ficam as mensagens que você confirmou ter publicado.'}
+];
+function simpleFlow(){
+ const current=simpleFlowGroups.find(g=>g.id===simpleFlowTab)||simpleFlowGroups[0];
+ const list=offers.filter(o=>!o.demo&&current.stages.includes(o.stage));
+ const action=o=>o.stage==='found'?'Adicionar meu link':o.stage==='approved'?'Copiar e postar':o.stage==='published'?'Ver mensagem':'Revisar e aprovar';
+ const hint=o=>o.stage==='found'?'Falta seu link de afiliado':o.stage==='approved'?'Mensagem aprovada por você':o.stage==='published'?'Publicação manual registrada':'Confira o texto e aprove';
+ return `<div class="page-heading"><div><p class="eyebrow">MEU FLUXO</p><h1>Suas publicações</h1><p class="subtitle">Escolha uma oferta e siga o botão. Você aprova tudo antes de postar.</p></div><button class="button primary" data-go="compose">＋ Criar post</button></div><div class="simple-path"><span><b>1</b> Prepare o texto</span><span aria-hidden="true">→</span><span><b>2</b> Aprove e copie</span><span aria-hidden="true">→</span><span><b>3</b> Poste no WhatsApp</span></div><div class="simple-tabs" aria-label="Etapas das publicações">${simpleFlowGroups.map(g=>`<button data-flow-tab="${g.id}" class="${g.id===current.id?'active':''}" aria-pressed="${g.id===current.id}">${g.title}<span>${offers.filter(o=>!o.demo&&g.stages.includes(o.stage)).length}</span></button>`).join('')}</div><p class="simple-help">${current.hint}</p><section class="simple-list">${list.map(o=>`<article class="simple-row"><div class="simple-category ${o.category==='Beleza'?'beauty':''}" aria-hidden="true">${o.category==='Beleza'?'✧':'⌂'}</div><div class="simple-info"><small>${esc(o.category)} · ${esc(o.store)}</small><h2>${esc(o.title)}</h2><p><strong>${money(o.price)}</strong><span>${hint(o)}</span></p>${safeURL(o.url)?`<a href="${esc(safeURL(o.url))}" target="_blank" rel="noopener noreferrer">Conferir na loja ↗</a>`:''}</div><div class="simple-row-actions"><button class="button primary" data-action="advance" data-id="${esc(o.id)}">${action(o)}${o.stage==='published'?'':' →'}</button><button class="text-button" data-action="edit" data-id="${esc(o.id)}">Editar oferta</button></div></article>`).join('')||`<div class="empty"><h3>${current.id==='ready'?'Nenhuma mensagem pronta ainda':current.id==='done'?'Suas publicações aparecerão aqui':'Tudo organizado por aqui'}</h3><p>${current.id==='ready'?'Abra Preparar, confira uma mensagem e aprove.':current.id==='done'?'Depois de enviar no WhatsApp, marque a oferta como publicada.':'Escolha um achado ou crie um post com seu link.'}</p><button class="button" data-go="${current.id==='prepare'?'explore':'flow'}" ${current.id!=='prepare'?'data-prepare-empty':''}>${current.id==='prepare'?'Ver ofertas':'Ir para Preparar'}</button></div>`}</section><p class="simple-footnote">O envio ao WhatsApp é manual. Os seus links e aprovações continuam salvos neste navegador.</p>`;
+}
+function bindSimpleFlow(){
+ $$('[data-flow-tab]').forEach(b=>b.onclick=()=>{simpleFlowTab=b.dataset.flowTab;render()});
+ $$('[data-prepare-empty]').forEach(b=>b.onclick=()=>{simpleFlowTab='prepare';go('flow')});
+}

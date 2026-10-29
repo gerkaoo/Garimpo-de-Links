@@ -1,0 +1,4 @@
+const fs=require('fs');
+const images=[{id:'web-shopee-1112216120-23593177233',file:'potes-vidro-shopee.jpg',url:'https://down-br.img.susercontent.com/file/br-11134207-820m4-msve1y7r5v5z7a'},{id:'web-shopee-333281563-17226918761',file:'necessaire-gancho-shopee.jpg',url:'https://down-br.img.susercontent.com/file/f48751780cd7a41f1c88bdbfabc4b8bb'}];
+fs.mkdirSync('dist/assets',{recursive:true});
+Promise.all(images.map(async image=>{try{const r=await fetch(image.url,{signal:AbortSignal.timeout(15000)});if(!r.ok||!r.headers.get('content-type')?.startsWith('image/'))throw Error('Image unavailable: '+r.status);const bytes=Buffer.from(await r.arrayBuffer());fs.writeFileSync('dist/assets/'+image.file,bytes);return {id:image.id,file:image.file,bytes:bytes.length,type:r.headers.get('content-type')}}catch(err){return {id:image.id,error:err.message}}})).then(r=>console.log(JSON.stringify(r)));
